@@ -11,4 +11,63 @@ paths:
       summary: Heartbeat metric
       tags:
       - Metrics
+  /api/note/:
+    get:
+      responses:
+        "200":
+          description: OK
+        "400":
+          description: Bad Request
+      summary: Get all user's notes
+      tags:
+      - Note
+    post:
+      responses:
+        "200":
+          description: OK
+        "400":
+          description: Bad Request
+      summary: Create note
+      tags:
+      - Note
+  /api/note/{id}:
+    delete:
+      parameters:
+      - description: Note ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      responses:
+        "200":
+          description: OK
+        "400":
+          description: Bad Request
+      summary: Delete note
+      tags:
+      - Note
+    get:
+      parameters:
+      - description: Note ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      responses:
+        "200":
+          description: OK
+        "400":
+          description: Bad Request
+      summary: Get note by id
+      tags:
+      - Note
+    post:
+      responses:
+        "200":
+          description: OK
+        "400":
+          description: Bad Request
+      summary: Update note
+      tags:
+      - Note
 swagger: "2.0"

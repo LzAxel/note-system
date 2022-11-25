@@ -7,20 +7,19 @@ import (
 	"net"
 	"net/http"
 	"note-system/internal/config"
+	"note-system/internal/handler"
 	"note-system/pkg/logging"
-	"note-system/pkg/metric"
 	"time"
 
 	_ "note-system/docs"
 
-	"github.com/julienschmidt/httprouter"
-	httpSwagger "github.com/swaggo/http-swagger"
+	"github.com/gin-gonic/gin"
 )
 
 type App struct {
 	cfg        *config.Config
 	logger     *logging.Logger
-	router     *httprouter.Router
+	router     *gin.Engine
 	httpServer *http.Server
 }
 
@@ -29,22 +28,12 @@ func (a *App) Run() {
 }
 
 func NewApp(config *config.Config, logger *logging.Logger) (App, error) {
-	logger.Info("router init")
-	router := httprouter.New()
-
-	logger.Info("swagger docs init")
-	router.Handler(http.MethodGet, "/swagger",
-		http.RedirectHandler("/swagger/index.html", http.StatusPermanentRedirect))
-	router.Handler(http.MethodGet, "/swagger/*any", httpSwagger.WrapHandler)
-
-	logger.Info("heartbeat init")
-	metricHandler := metric.Handler{}
-	metricHandler.Register(router)
+	router := handler.NewHandler(logger)
 
 	app := App{
 		cfg:    config,
 		logger: logger,
-		router: router,
+		router: router.InitRoutes(),
 	}
 
 	return app, nil
@@ -63,9 +52,10 @@ func (a *App) startHTTP() {
 	}
 
 	a.httpServer = &http.Server{
-		Handler:      a.router,
-		WriteTimeout: 15 * time.Second,
-		ReadTimeout:  15 * time.Second,
+		Handler:        a.router,
+		MaxHeaderBytes: 1 << 20,
+		WriteTimeout:   15 * time.Second,
+		ReadTimeout:    15 * time.Second,
 	}
 
 	a.logger.Info("app started")
