@@ -27,13 +27,12 @@ func (a *App) Run() {
 	a.startHTTP()
 }
 
-func NewApp(config *config.Config, logger *logging.Logger) (App, error) {
-	router := handler.NewHandler(logger)
+func NewApp(config *config.Config, logger *logging.Logger, handler *handler.Handler) (App, error) {
 
 	app := App{
 		cfg:    config,
 		logger: logger,
-		router: router.InitRoutes(),
+		router: handler.InitRoutes(),
 	}
 
 	return app, nil

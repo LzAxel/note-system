@@ -1,6 +1,11 @@
 package handler
 
 import (
+	"context"
+	"net/http"
+	"note-system/internal/domain"
+	"strconv"
+
 	"github.com/gin-gonic/gin"
 )
 
@@ -11,7 +16,17 @@ import (
 // @Failure 400
 // @Router /api/note/{id} [get]
 func (h *Handler) getById(c *gin.Context) {
+	id := c.GetInt("id")
+	h.logger.Infof("getting note id:%d", id)
+	ctx, cancel := context.WithTimeout(c, responseTimeout)
+	defer cancel()
 
+	note, err := h.service.Note.GetById(ctx, 1)
+	if err != nil {
+		newErrorResponse(c, 403, err.Error())
+	}
+
+	c.JSON(204, map[interface{}]int{"value": note})
 }
 
 // @Summary Get all user's notes
@@ -29,7 +44,34 @@ func (h *Handler) getAll(c *gin.Context) {
 // @Failure 400
 // @Router /api/note/ [post]
 func (h *Handler) create(c *gin.Context) {
+	ctx, cancel := context.WithTimeout(c, responseTimeout)
+	defer cancel()
 
+	accountId := c.Value("accountId").(string)
+	if accountId == "" {
+		newErrorResponse(c, http.StatusInternalServerError, "failed to get account id")
+		return
+	}
+	accountIdInt, err := strconv.Atoi(accountId)
+	if err != nil {
+		newErrorResponse(c, http.StatusInternalServerError, "failed to get account id")
+		return
+	}
+
+	dto := domain.CreateNoteDTO{AccountId: accountIdInt}
+
+	if err := c.BindJSON(&dto); err != nil {
+		newErrorResponse(c, http.StatusBadRequest, err.Error())
+		return
+	}
+
+	noteId, err := h.service.Note.Create(ctx, dto)
+	if err != nil {
+		newErrorResponse(c, http.StatusInternalServerError, err.Error())
+		return
+	}
+
+	newIdResponse(c, 201, noteId)
 }
 
 // @Summary Update note

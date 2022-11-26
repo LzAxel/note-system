@@ -1,20 +1,29 @@
 package handler
 
 import (
+	"note-system/internal/service"
 	"note-system/pkg/logging"
+	"time"
 
 	"github.com/gin-gonic/gin"
 	swaggerFiles "github.com/swaggo/files"
 	ginSwagger "github.com/swaggo/gin-swagger"
 )
 
+const (
+	responseTimeout = time.Second * 3
+)
+
 type Handler struct {
-	logger *logging.Logger
+	logger  *logging.Logger
+	service *service.Service
 }
 
-func NewHandler(logger *logging.Logger) *Handler {
+func NewHandler(logger *logging.Logger, service *service.Service) *Handler {
+
 	return &Handler{
-		logger: logger,
+		logger:  logger,
+		service: service,
 	}
 }
 
@@ -28,9 +37,9 @@ func (h *Handler) InitRoutes() *gin.Engine {
 		auth.POST("/sign-up", h.signUp)
 	}
 
-	api := router.Group("/api")
+	api := router.Group("/api", h.accountIdentity)
 	{
-		api.GET("/heartbeat", h.Heartbeat)
+		api.GET("", h.Heartbeat)
 
 		note := api.Group("/note")
 		{

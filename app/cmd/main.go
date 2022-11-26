@@ -4,7 +4,13 @@ import (
 	"log"
 	"note-system/internal/app"
 	"note-system/internal/config"
+	"note-system/internal/handler"
+	"note-system/internal/service"
+	"note-system/internal/storage"
+	"note-system/internal/storage/psql"
+	"note-system/pkg/jwt"
 	"note-system/pkg/logging"
+	"time"
 )
 
 func main() {
@@ -15,8 +21,17 @@ func main() {
 	logging.Init(cfg.AppConfig.LogLevel)
 	logger := logging.GetLogger()
 
-	logger.Info("sds")
-	a, err := app.NewApp(cfg, logger)
+	db, err := psql.NewPostgresStorage(psql.Config(cfg.DBConfig))
+	if err != nil {
+		logger.Fatalf("failed to connect to db: %v", err)
+	}
+
+	jwtManager := jwt.NewJWTManager(cfg.JWTSecret, time.Hour*24)
+	storage := storage.NewStorage(logger, db)
+	service := service.NewService(logger, storage, jwtManager)
+	handler := handler.NewHandler(logger, service)
+
+	a, err := app.NewApp(cfg, logger, handler)
 	if err != nil {
 		logger.Fatal(err)
 	}

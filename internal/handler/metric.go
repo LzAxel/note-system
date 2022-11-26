@@ -13,5 +13,5 @@ import (
 // @Failure 400
 // @Router /api/heartbeat [get]
 func (h *Handler) Heartbeat(c *gin.Context) {
-	c.JSON(http.StatusNoContent, "")
+	c.JSON(http.StatusOK, map[string]interface{}{"status": "ok"})
 }
