@@ -39,7 +39,7 @@ func (h *Handler) InitRoutes() *gin.Engine {
 
 	api := router.Group("/api", h.accountIdentity)
 	{
-		api.GET("", h.Heartbeat)
+		api.GET("/heartbeat", h.heartbeat)
 
 		note := api.Group("/note")
 		{
