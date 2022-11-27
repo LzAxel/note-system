@@ -16,16 +16,16 @@ func (h *Handler) signUp(c *gin.Context) {
 	accountDTO := domain.CreateAccountDTO{}
 
 	if err := c.BindJSON(&accountDTO); err != nil {
-		newErrorResponse(c, http.StatusBadRequest, err.Error())
+		ErrorResponse(c, http.StatusBadRequest, err.Error())
 		return
 	}
 
 	accountId, err := h.service.Authorization.SignUp(ctx, accountDTO)
 	if err != nil {
-		newErrorResponse(c, http.StatusInternalServerError, err.Error())
+		ErrorResponse(c, http.StatusInternalServerError, err.Error())
 		return
 	}
-	newIdResponse(c, http.StatusCreated, accountId)
+	IdResponse(c, http.StatusCreated, accountId)
 }
 func (h *Handler) signIn(c *gin.Context) {
 	h.logger.Debugln("signing in account")
@@ -35,13 +35,13 @@ func (h *Handler) signIn(c *gin.Context) {
 	accountDTO := domain.LoginAccountDTO{}
 
 	if err := c.BindJSON(&accountDTO); err != nil {
-		newErrorResponse(c, http.StatusBadRequest, err.Error())
+		ErrorResponse(c, http.StatusBadRequest, err.Error())
 		return
 	}
 
 	token, err := h.service.Authorization.SignIn(ctx, accountDTO)
 	if err != nil {
-		newErrorResponse(c, http.StatusInternalServerError, err.Error())
+		ErrorResponse(c, http.StatusInternalServerError, err.Error())
 		return
 	}
 	h.logger.Debugf("token: %s", token)

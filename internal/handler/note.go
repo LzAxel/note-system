@@ -22,7 +22,7 @@ func (h *Handler) getById(c *gin.Context) {
 
 	note, err := h.service.Note.GetById(ctx, 1)
 	if err != nil {
-		newErrorResponse(c, 403, err.Error())
+		ErrorResponse(c, 403, err.Error())
 	}
 
 	c.JSON(204, map[interface{}]int{"value": note})
@@ -48,24 +48,24 @@ func (h *Handler) create(c *gin.Context) {
 
 	accountId, err := h.getAccountId(c)
 	if err != nil {
-		newErrorResponse(c, http.StatusInternalServerError, "failed to get account id")
+		ErrorResponse(c, http.StatusInternalServerError, "failed to get account id")
 		return
 	}
 
 	dto := domain.CreateNoteDTO{AccountId: accountId}
 
 	if err := c.BindJSON(&dto); err != nil {
-		newErrorResponse(c, http.StatusBadRequest, err.Error())
+		ErrorResponse(c, http.StatusBadRequest, err.Error())
 		return
 	}
 
 	noteId, err := h.service.Note.Create(ctx, dto)
 	if err != nil {
-		newErrorResponse(c, http.StatusInternalServerError, err.Error())
+		ErrorResponse(c, http.StatusInternalServerError, err.Error())
 		return
 	}
 
-	newIdResponse(c, 201, noteId)
+	IdResponse(c, 201, noteId)
 }
 
 // @Summary Update note

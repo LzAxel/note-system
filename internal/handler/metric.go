@@ -12,6 +12,6 @@ import (
 // @Success 204
 // @Failure 400
 // @Router /api/heartbeat [get]
-func (h *Handler) Heartbeat(c *gin.Context) {
+func (h *Handler) heartbeat(c *gin.Context) {
 	c.JSON(http.StatusOK, map[string]interface{}{"status": "ok"})
 }
