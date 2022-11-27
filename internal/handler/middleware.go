@@ -1,7 +1,9 @@
 package handler
 
 import (
+	"errors"
 	"net/http"
+	"strconv"
 	"strings"
 
 	"github.com/gin-gonic/gin"
@@ -38,4 +40,17 @@ func (h *Handler) accountIdentity(ctx *gin.Context) {
 	}
 
 	ctx.Set("accountId", claims["sub"].(string))
+}
+
+func (h *Handler) getAccountId(ctx *gin.Context) (int, error) {
+	accountId := ctx.Value("accountId").(string)
+	if accountId == "" {
+		return 0, errors.New("failed to get account id")
+	}
+	accountIdInt, err := strconv.Atoi(accountId)
+	if err != nil {
+		return 0, errors.New("failed to get account id")
+	}
+
+	return accountIdInt, nil
 }

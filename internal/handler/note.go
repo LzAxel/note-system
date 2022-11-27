@@ -4,7 +4,6 @@ import (
 	"context"
 	"net/http"
 	"note-system/internal/domain"
-	"strconv"
 
 	"github.com/gin-gonic/gin"
 )
@@ -40,25 +39,20 @@ func (h *Handler) getAll(c *gin.Context) {
 
 // @Summary Create note
 // @Tags Note
-// @Success 200
+// @Success 201
 // @Failure 400
 // @Router /api/note/ [post]
 func (h *Handler) create(c *gin.Context) {
 	ctx, cancel := context.WithTimeout(c, responseTimeout)
 	defer cancel()
 
-	accountId := c.Value("accountId").(string)
-	if accountId == "" {
-		newErrorResponse(c, http.StatusInternalServerError, "failed to get account id")
-		return
-	}
-	accountIdInt, err := strconv.Atoi(accountId)
+	accountId, err := h.getAccountId(c)
 	if err != nil {
 		newErrorResponse(c, http.StatusInternalServerError, "failed to get account id")
 		return
 	}
 
-	dto := domain.CreateNoteDTO{AccountId: accountIdInt}
+	dto := domain.CreateNoteDTO{AccountId: accountId}
 
 	if err := c.BindJSON(&dto); err != nil {
 		newErrorResponse(c, http.StatusBadRequest, err.Error())
