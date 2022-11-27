@@ -5,6 +5,7 @@ import (
 	"log"
 	"path"
 	"runtime"
+	"strings"
 
 	"github.com/sirupsen/logrus"
 )
@@ -30,11 +31,20 @@ func Init(level string) {
 	l.Formatter = &logrus.TextFormatter{
 		CallerPrettyfier: func(f *runtime.Frame) (function string, file string) {
 			filename := path.Base(f.File)
+
+			var trucatedFunc string
+
+			splittedFunc := strings.Split(f.Function, "/")
+			if len(splittedFunc) >= 3 {
+				trucatedFunc = strings.Join(splittedFunc[1:], "/")
+			}
+
 			return fmt.Sprintf("%v:%v", filename, f.Line),
-				fmt.Sprintf("%v()", f.Function)
+				fmt.Sprintf("%v()", trucatedFunc)
 		},
-		DisableColors: false,
-		FullTimestamp: false,
+		DisableColors:          false,
+		FullTimestamp:          false,
+		DisableLevelTruncation: true,
 	}
 	l.SetLevel(logrusLevel)
 
