@@ -1,7 +1,7 @@
 package domain
 
 type Note struct {
-	Id        int    `db:"id"`
+	Id        int    `json:"_id" db:"id"`
 	Name      string `json:"name" db:"name"`
 	Text      string `json:"text" db:"text"`
 	Tag       string `json:"tag" db:"tag"`
