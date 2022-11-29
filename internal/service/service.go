@@ -14,8 +14,11 @@ type Authorization interface {
 }
 
 type Note interface {
-	GetById(ctx context.Context, id int) (int, error)
+	GetById(ctx context.Context, noteDTO domain.GetDeleteNoteDTO) (domain.Note, error)
+	GetAll(ctx context.Context, accountId int) ([]domain.Note, error)
 	Create(ctx context.Context, noteDTO domain.CreateNoteDTO) (int, error)
+	Delete(ctx context.Context, noteDTO domain.GetDeleteNoteDTO) error
+	Update(ctx context.Context, noteDTO domain.UpdateNoteDTO) (int, error)
 }
 
 type Service struct {

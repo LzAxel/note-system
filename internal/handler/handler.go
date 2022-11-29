@@ -43,11 +43,11 @@ func (h *Handler) InitRoutes() *gin.Engine {
 
 		note := api.Group("/note")
 		{
-			note.GET("/", h.getAll)
-			note.GET("/:id", h.getById)
-			note.POST("/", h.create)
-			note.DELETE("/:id", h.delete)
-			note.PATCH("/:id", h.update)
+			note.GET("/", h.getAllNotes)
+			note.GET("/:id", h.getNoteById)
+			note.POST("/", h.createNote)
+			note.DELETE("/:id", h.deleteNote)
+			note.PATCH("/:id", h.updateNote)
 		}
 	}
 
