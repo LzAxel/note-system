@@ -29,8 +29,8 @@ func (p *NotePostgres) GetById(ctx context.Context, noteDTO domain.GetDeleteNote
 
 	p.logger.Debugf("getting note: id=%d, accountId=%d", noteDTO.Id, noteDTO.AccountId)
 
-	query := fmt.Sprintf("SELECT * FROM %s WHERE id=$1 and account_id=$2", noteTable)
-	if err := p.db.Get(&note, query, noteDTO.Id, noteDTO.AccountId); err != nil {
+	query := fmt.Sprintf("SELECT * FROM %s WHERE (id=$1 AND account_id=$2) OR (id=$3 AND is_public=True)", noteTable)
+	if err := p.db.Get(&note, query, noteDTO.Id, noteDTO.AccountId, noteDTO.Id); err != nil {
 		return note, err
 	}
 
