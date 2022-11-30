@@ -5,6 +5,8 @@ import (
 	"note-system/internal/domain"
 	"note-system/internal/storage"
 	"note-system/pkg/logging"
+
+	"github.com/teris-io/shortid"
 )
 
 type NoteService struct {
@@ -27,11 +29,16 @@ func (s *NoteService) GetAll(ctx context.Context, accountId int) ([]domain.Note,
 }
 
 func (s *NoteService) Create(ctx context.Context, noteDTO domain.CreateNoteDTO) (int, error) {
+	url, err := shortid.Generate()
+	if err != nil {
+		return 0, err
+	}
+
 	note := domain.Note{
 		Name:      noteDTO.Name,
 		Text:      noteDTO.Text,
 		Tag:       noteDTO.Tag,
-		Url:       "testnoteurl222",
+		Url:       url,
 		IsPublic:  noteDTO.IsPublic,
 		AccountId: noteDTO.AccountId,
 	}

@@ -43,6 +43,7 @@ require (
 	github.com/swaggo/gin-swagger v1.5.3 // indirect
 	github.com/swaggo/http-swagger v1.3.3 // indirect
 	github.com/swaggo/swag v1.8.8 // indirect
+	github.com/teris-io/shortid v0.0.0-20220617161101-71ec9f2aa569 // indirect
 	github.com/ugorji/go/codec v1.2.7 // indirect
 	github.com/urfave/cli/v2 v2.3.0 // indirect
 	golang.org/x/crypto v0.3.0 // indirect
