@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"note-system/internal/domain"
 	"note-system/pkg/logging"
+	"time"
 
 	"github.com/Masterminds/squirrel"
 	"github.com/jmoiron/sqlx"
@@ -87,7 +88,7 @@ func (p *NotePostgres) Update(ctx context.Context, noteDTO domain.UpdateNoteDTO)
 	if noteDTO.IsPublic != nil {
 		query = query.Set("is_public", noteDTO.IsPublic)
 	}
-
+	query.Set("updated_at", time.Now())
 	queryStr, queryArgs := query.Where("id = ? and account_id = ?", noteDTO.Id, noteDTO.AccountId).MustSql()
 
 	p.logger.Debugf("update note with query: %s | %v", queryStr, queryArgs)
