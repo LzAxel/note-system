@@ -73,7 +73,9 @@ func (p *NotePostgres) Delete(ctx context.Context, noteDTO domain.GetDeleteNoteD
 	return nil
 }
 
-func (p *NotePostgres) Update(ctx context.Context, noteDTO domain.UpdateNoteDTO) (int, error) {
+func (p *NotePostgres) Update(ctx context.Context, noteDTO domain.UpdateNoteDTO) (domain.Note, error) {
+	var note domain.Note
+
 	query := squirrel.Update(noteTable).PlaceholderFormat(squirrel.Dollar)
 
 	if noteDTO.Name != nil {
@@ -88,19 +90,15 @@ func (p *NotePostgres) Update(ctx context.Context, noteDTO domain.UpdateNoteDTO)
 	if noteDTO.IsPublic != nil {
 		query = query.Set("is_public", noteDTO.IsPublic)
 	}
-	query.Set("updated_at", time.Now())
+	query = query.Set("updated_at", time.Now())
 	queryStr, queryArgs := query.Where("id = ? and account_id = ?", noteDTO.Id, noteDTO.AccountId).MustSql()
-
+	queryStr = queryStr + " RETURNING *"
 	p.logger.Debugf("update note with query: %s | %v", queryStr, queryArgs)
 
-	result, err := p.db.Exec(queryStr, queryArgs...)
+	err := p.db.Get(&note, queryStr, queryArgs...)
 	if err != nil {
-		return 0, err
+		return note, err
 	}
-	if c, _ := result.RowsAffected(); c == 0 {
-		return 0, sql.ErrNoRows
-	}
-	p.logger.Debug(result.RowsAffected())
 
-	return noteDTO.Id, nil
+	return note, nil
 }

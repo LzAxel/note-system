@@ -20,7 +20,7 @@ type Note interface {
 	Create(ctx context.Context, note domain.Note) (int, error)
 	GetAll(ctx context.Context, accountId int) ([]domain.Note, error)
 	Delete(ctx context.Context, noteDTO domain.GetDeleteNoteDTO) error
-	Update(ctx context.Context, noteDTO domain.UpdateNoteDTO) (int, error)
+	Update(ctx context.Context, noteDTO domain.UpdateNoteDTO) (domain.Note, error)
 }
 
 type Storage struct {

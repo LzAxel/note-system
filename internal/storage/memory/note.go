@@ -80,15 +80,15 @@ func (m *NoteMemory) Delete(ctx context.Context, noteDTO domain.GetDeleteNoteDTO
 	return nil
 }
 
-func (m *NoteMemory) Update(ctx context.Context, noteDTO domain.UpdateNoteDTO) (int, error) {
+func (m *NoteMemory) Update(ctx context.Context, noteDTO domain.UpdateNoteDTO) (domain.Note, error) {
 	var note domain.Note
 
 	note, err := m.loadNoteById(noteDTO.Id)
 	if err != nil {
-		return 0, err
+		return note, err
 	}
 	if note.AccountId != noteDTO.AccountId {
-		return 0, domain.ErrNotTheOwner
+		return note, domain.ErrNotTheOwner
 	}
 
 	if noteDTO.Name != nil {
@@ -106,7 +106,7 @@ func (m *NoteMemory) Update(ctx context.Context, noteDTO domain.UpdateNoteDTO) (
 	note.UpdatedAt = time.Now()
 	m.m.Store(note.Id, note)
 
-	return note.Id, nil
+	return note, nil
 }
 
 func (m *NoteMemory) loadNoteById(id int) (domain.Note, error) {

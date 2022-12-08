@@ -51,6 +51,6 @@ func (s *NoteService) Delete(ctx context.Context, noteDTO domain.GetDeleteNoteDT
 	return s.storage.Delete(ctx, noteDTO)
 }
 
-func (p *NoteService) Update(ctx context.Context, noteDTO domain.UpdateNoteDTO) (int, error) {
+func (p *NoteService) Update(ctx context.Context, noteDTO domain.UpdateNoteDTO) (domain.Note, error) {
 	return p.storage.Update(ctx, noteDTO)
 }

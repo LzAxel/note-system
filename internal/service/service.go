@@ -18,7 +18,7 @@ type Note interface {
 	GetAll(ctx context.Context, accountId int) ([]domain.Note, error)
 	Create(ctx context.Context, noteDTO domain.CreateNoteDTO) (int, error)
 	Delete(ctx context.Context, noteDTO domain.GetDeleteNoteDTO) error
-	Update(ctx context.Context, noteDTO domain.UpdateNoteDTO) (int, error)
+	Update(ctx context.Context, noteDTO domain.UpdateNoteDTO) (domain.Note, error)
 }
 
 type Service struct {

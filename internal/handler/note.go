@@ -139,14 +139,14 @@ func (h *Handler) updateNote(c *gin.Context) {
 		ErrorResponse(c, http.StatusBadRequest, err.Error())
 		return
 	}
-	noteId, err := h.service.Note.Update(ctx, dto)
+	note, err := h.service.Note.Update(ctx, dto)
 	if err != nil {
 		h.logger.Errorf(err.Error())
 		ErrorResponse(c, http.StatusInternalServerError, err.Error())
 		return
 	}
 
-	IdResponse(c, 201, noteId)
+	c.JSON(http.StatusCreated, note)
 }
 
 // @Summary Delete note
