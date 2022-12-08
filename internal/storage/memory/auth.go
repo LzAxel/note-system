@@ -2,13 +2,13 @@ package memory
 
 import (
 	"context"
-	"errors"
 	"note-system/internal/domain"
 	"note-system/pkg/logging"
 	"sync"
+	"time"
 )
 
-var counter int = 0
+var authCounter int = 0
 
 type AuthMemory struct {
 	m      sync.Map
@@ -21,9 +21,10 @@ func NewAuthMemory(logger *logging.Logger) *AuthMemory {
 
 func (p *AuthMemory) SignUp(ctx context.Context, account domain.Account) (int, error) {
 	p.logger.Debugln("storage signing up accont")
-	account.Id = counter
+	account.Id = authCounter
+	account.CreatedAt = time.Now()
 	p.m.Store(account.Username, account)
-	counter++
+	authCounter++
 
 	return account.Id, nil
 }
@@ -33,11 +34,11 @@ func (p *AuthMemory) SignIn(ctx context.Context, accountDTO domain.LoginAccountD
 	var account domain.Account
 	loadedAccount, ok := p.m.Load(accountDTO.Username)
 	if !ok {
-		return account, errors.New("account not found")
+		return account, domain.ErrNotFound
 	}
 	account, ok = loadedAccount.(domain.Account)
 	if !ok {
-		return account, errors.New("account not found")
+		return account, domain.ErrFailedToGet
 	}
 
 	return account, nil

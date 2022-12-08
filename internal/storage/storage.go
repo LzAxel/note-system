@@ -3,6 +3,7 @@ package storage
 import (
 	"context"
 	"note-system/internal/domain"
+	"note-system/internal/storage/memory"
 	"note-system/internal/storage/psql"
 	"note-system/pkg/logging"
 
@@ -34,5 +35,13 @@ func NewStorage(logger *logging.Logger, db *sqlx.DB) *Storage {
 		logger: logger,
 		Note:   psql.NewNotePostgres(db, logger),
 		Auth:   psql.NewAuthPostgres(db, logger),
+	}
+}
+
+func NewInMemoryStorage(logger *logging.Logger) *Storage {
+	return &Storage{
+		logger: logger,
+		Note:   memory.NewNoteMemory(logger),
+		Auth:   memory.NewAuthMemory(logger),
 	}
 }

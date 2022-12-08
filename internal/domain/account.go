@@ -1,6 +1,15 @@
 package domain
 
-import "time"
+import (
+	"errors"
+	"time"
+)
+
+var (
+	ErrNotFound    = errors.New("not found")
+	ErrFailedToGet = errors.New("failed to get")
+	ErrNotTheOwner = errors.New("not the owner of note")
+)
 
 type Account struct {
 	Id           int       `db:"id"`
